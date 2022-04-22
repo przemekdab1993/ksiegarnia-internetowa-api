@@ -12,7 +12,7 @@ services:
     volumes:
       - ./postgre:/var/lib/postgresql/data:rw
     ports:
-      - 5433:5433
+      - 5433:5432
   nginx:
     image: nginx:1.21.6-alpine
     container_name: nginx-api
@@ -37,6 +37,6 @@ services:
     image: adminer
     restart: always
     ports:
-      - 8088:8088
+      - 8088:8080
 # node:
 # rabbitmq:
