@@ -15,19 +15,17 @@ use Carbon\Carbon;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: CheeseListingRepository::class)]
-/**
- * @ApiResource(
- *     collectionOperations={"get", "post"},
- *     itemOperations={"get", "put"},
- *     normalizationContext={"groups"={"cheeses_list:read"}, "swagger_definition_name"="Read"},
- *     denormalizationContext={"groups"={"cheeses_list:write"}, "swagger_definition_name"="Write"},
- *     shortName="cheeses"
- * )
- * @ApiFilter(BooleanFilter::class, properties={"isPublished"})
- * @ApiFilter(SearchFilter::class, properties={"title": "partial"})
- * @ApiFilter(RangeFilter::class, properties={"price"})
- * @ApiFilter(PropertyFilter::class)
- */
+#[ApiResource(
+    collectionOperations: ['get', 'post'],
+    itemOperations: ['get', 'put'],
+    shortName: 'cheese',
+    denormalizationContext: ['groups' => ['cheeses_list:write'], 'swagger_definition_name'=>'Write'],
+    normalizationContext: ['groups' => ['cheeses_list:read'], 'swagger_definition_name'=>'Read']
+)]
+#[ApiFilter(BooleanFilter::class, properties: ['isPublished'])]
+#[ApiFilter(SearchFilter::class, properties: ['title'=>'partial'])]
+#[ApiFilter(RangeFilter::class, properties: ['price'])]
+#[ApiFilter(PropertyFilter::class)]
 class CheeseListing
 {
     #[ORM\Id]
