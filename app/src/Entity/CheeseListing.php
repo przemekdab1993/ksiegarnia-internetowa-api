@@ -19,6 +19,12 @@ use Doctrine\ORM\Mapping as ORM;
     collectionOperations: ['get', 'post'],
     itemOperations: ['get', 'put'],
     shortName: 'cheese',
+    attributes: [
+        'pagination_items_per_page' => 10,
+        'formats' => [
+            'jsonld', 'json', 'html', 'jsonhal', 'csv' => ['text/csv']
+        ]
+    ],
     denormalizationContext: ['groups' => ['cheeses_list:write'], 'swagger_definition_name'=>'Write'],
     normalizationContext: ['groups' => ['cheeses_list:read'], 'swagger_definition_name'=>'Read']
 )]
