@@ -13,6 +13,8 @@ use Symfony\Component\Serializer\Annotation\SerializedName;
 use App\Repository\CheeseListingRepository;
 use Carbon\Carbon;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints\Length;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 #[ORM\Entity(repositoryClass: CheeseListingRepository::class)]
 #[ApiResource(
@@ -42,14 +44,22 @@ class CheeseListing
 
     #[ORM\Column(type: 'string', length: 255)]
     #[Groups(['cheeses_list:read', 'cheeses_list:write'])]
+    #[NotBlank]
+    #[Length(
+        min: 2,
+        max: 50,
+        maxMessage: 'Describe your cheese in 50 chars or less'
+    )]
     private $title;
 
     #[ORM\Column(type: 'text')]
     #[Groups('cheeses_list:read')]
+    #[NotBlank]
     private $description;
 
     #[ORM\Column(type: 'integer')]
     #[Groups(['cheeses_list:read', 'cheeses_list:write'])]
+    #[NotBlank]
     private $price;
 
     #[ORM\Column(type: 'datetime')]
@@ -60,6 +70,7 @@ class CheeseListing
 
     #[ORM\Column(type: 'integer')]
     #[Groups(['cheeses_list:read', 'cheeses_list:write'])]
+    #[NotBlank]
     private $quantity;
 
 
