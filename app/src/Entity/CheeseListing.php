@@ -73,6 +73,11 @@ class CheeseListing
     #[NotBlank]
     private $quantity;
 
+    #[ORM\ManyToOne(targetEntity: UserApi::class, inversedBy: 'cheeseListings')]
+    #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['cheeses_list:read', 'cheeses_list:write'])]
+    private $owner;
+
 
     public function __construct(string $title = null)
     {
@@ -172,6 +177,18 @@ class CheeseListing
     public function setQuantity(int $quantity): self
     {
         $this->quantity = $quantity;
+
+        return $this;
+    }
+
+    public function getOwner(): ?UserApi
+    {
+        return $this->owner;
+    }
+
+    public function setOwner(?UserApi $owner): self
+    {
+        $this->owner = $owner;
 
         return $this;
     }
