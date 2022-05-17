@@ -2,12 +2,23 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\UserApiRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints\Email;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 #[ORM\Entity(repositoryClass: UserApiRepository::class)]
+#[ApiResource(
+    denormalizationContext: ['groups' => ['user_api:write']],
+    normalizationContext: ['groups' => ['user_api:read']]
+)]
+#[UniqueEntity(fields: ['userName'])]
+#[UniqueEntity(fields: ['email'])]
 class UserApi implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -16,15 +27,22 @@ class UserApi implements UserInterface, PasswordAuthenticatedUserInterface
     private $id;
 
     #[ORM\Column(type: 'string', length: 180, unique: true)]
+    #[Groups(['user_api:read', 'user_api:write'])]
+    #[NotBlank]
+    #[Email]
     private $email;
 
     #[ORM\Column(type: 'json')]
     private $roles = [];
 
     #[ORM\Column(type: 'string')]
+    #[Groups(['user_api:write'])]
+    #[NotBlank]
     private $password;
 
     #[ORM\Column(type: 'string', length: 255, unique: true)]
+    #[Groups(['user_api:read', 'user_api:write'])]
+    #[NotBlank]
     private $userName;
 
     public function getId(): ?int
@@ -57,7 +75,7 @@ class UserApi implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @deprecated since Symfony 5.3, use getUserIdentifier instead
      */
-    public function getUsername(): string
+    public function getUserName(): string
     {
         return (string) $this->userName;
     }
