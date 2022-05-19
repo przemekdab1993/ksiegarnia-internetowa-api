@@ -19,7 +19,14 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 #[ORM\Entity(repositoryClass: CheeseListingRepository::class)]
 #[ApiResource(
     collectionOperations: ['get', 'post'],
-    itemOperations: ['get', 'put'],
+    itemOperations: [
+        'get' => [
+            'normalization_context' => [
+                'groups'=> ['cheeses_list:read', 'cheese_list:item:get']
+            ]
+        ],
+        'put'
+    ],
     shortName: 'cheese',
     attributes: [
         'pagination_items_per_page' => 10,
@@ -43,7 +50,7 @@ class CheeseListing
     private $id;
 
     #[ORM\Column(type: 'string', length: 255)]
-    #[Groups(['cheeses_list:read', 'cheeses_list:write'])]
+    #[Groups(['cheeses_list:read', 'cheeses_list:write', 'user_api:read'])]
     #[NotBlank]
     #[Length(
         min: 2,
@@ -53,12 +60,12 @@ class CheeseListing
     private $title;
 
     #[ORM\Column(type: 'text')]
-    #[Groups('cheeses_list:read')]
+    #[Groups(['cheeses_list:read', 'user_api:read'])]
     #[NotBlank]
     private $description;
 
     #[ORM\Column(type: 'integer')]
-    #[Groups(['cheeses_list:read', 'cheeses_list:write'])]
+    #[Groups(['cheeses_list:read', 'cheeses_list:write', 'user_api:read'])]
     #[NotBlank]
     private $price;
 
@@ -69,7 +76,7 @@ class CheeseListing
     private $isPublished = false;
 
     #[ORM\Column(type: 'integer')]
-    #[Groups(['cheeses_list:read', 'cheeses_list:write'])]
+    #[Groups(['cheeses_list:read', 'cheeses_list:write', 'user_api:read'])]
     #[NotBlank]
     private $quantity;
 

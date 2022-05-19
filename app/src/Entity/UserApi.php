@@ -29,7 +29,7 @@ class UserApi implements UserInterface, PasswordAuthenticatedUserInterface
     private $id;
 
     #[ORM\Column(type: 'string', length: 180, unique: true)]
-    #[Groups(['user_api:read', 'user_api:write'])]
+    #[Groups(['user_api:read', 'user_api:write', 'cheese_list:item:get'])]
     #[NotBlank]
     #[Email]
     private $email;
@@ -43,7 +43,7 @@ class UserApi implements UserInterface, PasswordAuthenticatedUserInterface
     private $password;
 
     #[ORM\Column(type: 'string', length: 255, unique: true)]
-    #[Groups(['user_api:read', 'user_api:write'])]
+    #[Groups(['user_api:read', 'user_api:write', 'cheese_list:item:get'])]
     #[NotBlank]
     private $userName;
 
