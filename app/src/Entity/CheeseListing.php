@@ -15,6 +15,7 @@ use Carbon\Carbon;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\Valid;
 
 #[ORM\Entity(repositoryClass: CheeseListingRepository::class)]
 #[ApiResource(
@@ -50,7 +51,7 @@ class CheeseListing
     private $id;
 
     #[ORM\Column(type: 'string', length: 255)]
-    #[Groups(['cheeses_list:read', 'cheeses_list:write', 'user_api:read'])]
+    #[Groups(['cheeses_list:read', 'cheeses_list:write', 'user_api:read', 'user_api:write'])]
     #[NotBlank]
     #[Length(
         min: 2,
@@ -65,7 +66,7 @@ class CheeseListing
     private $description;
 
     #[ORM\Column(type: 'integer')]
-    #[Groups(['cheeses_list:read', 'cheeses_list:write', 'user_api:read'])]
+    #[Groups(['cheeses_list:read', 'cheeses_list:write', 'user_api:read', 'user_api:write'])]
     #[NotBlank]
     private $price;
 
@@ -76,13 +77,14 @@ class CheeseListing
     private $isPublished = false;
 
     #[ORM\Column(type: 'integer')]
-    #[Groups(['cheeses_list:read', 'cheeses_list:write', 'user_api:read'])]
+    #[Groups(['cheeses_list:read', 'cheeses_list:write', 'user_api:read', 'user_api:write'])]
     #[NotBlank]
     private $quantity;
 
     #[ORM\ManyToOne(targetEntity: UserApi::class, inversedBy: 'cheeseListings')]
     #[ORM\JoinColumn(nullable: false)]
     #[Groups(['cheeses_list:read', 'cheeses_list:write'])]
+    #[Valid]
     private $owner;
 
 
@@ -131,7 +133,7 @@ class CheeseListing
         return $this;
     }
 
-    #[Groups('cheeses_list:write')]
+    #[Groups(['cheeses_list:write', 'user_api:write'])]
     #[SerializedName('description')]
     public function setTextDescription(string $description): self
     {

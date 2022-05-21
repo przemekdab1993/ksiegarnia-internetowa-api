@@ -13,6 +13,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\Valid;
 
 #[ORM\Entity(repositoryClass: UserApiRepository::class)]
 #[ApiResource(
@@ -43,12 +44,13 @@ class UserApi implements UserInterface, PasswordAuthenticatedUserInterface
     private $password;
 
     #[ORM\Column(type: 'string', length: 255, unique: true)]
-    #[Groups(['user_api:read', 'user_api:write', 'cheese_list:item:get'])]
+    #[Groups(['user_api:read', 'user_api:write', 'cheese_list:item:get', 'cheeses_list:write'])]
     #[NotBlank]
     private $userName;
 
-    #[ORM\OneToMany(mappedBy: 'owner', targetEntity: CheeseListing::class)]
-    #[Groups(['user_api:read'])]
+    #[ORM\OneToMany(mappedBy: 'owner', targetEntity: CheeseListing::class, cascade: ['persist'])]
+    #[Groups(['user_api:read', 'user_api:write'])]
+    #[Valid]
     private $cheeseListings;
 
     public function __construct()
