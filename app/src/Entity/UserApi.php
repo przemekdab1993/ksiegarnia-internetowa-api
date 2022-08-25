@@ -25,7 +25,7 @@ use Symfony\Component\Validator\Constraints\Valid;
 #[ApiFilter(PropertyFilter::class)]
 #[UniqueEntity(fields: ['userName'])]
 #[UniqueEntity(fields: ['email'])]
-class UserApi implements UserInterface, PasswordAuthenticatedUserInterface
+class UserApi implements UserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]

@@ -18,11 +18,11 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Valid;
 
 #[ORM\Entity(repositoryClass: AuthorRepository::class)]
-#[ApiResource(
-    attributes: [],
-    denormalizationContext: ["groups"=>["author:write"]],
-    normalizationContext: ["groups"=>["author:read"]]
-)]
+//#[ApiResource(
+//    attributes: [],
+//    denormalizationContext: ["groups"=>["author:write"]],
+//    normalizationContext: ["groups"=>["author:read"]]
+//)]
 #[ApiFilter(PropertyFilter::class)]
 #[UniqueEntity(fields: ["email"])]
 class Author

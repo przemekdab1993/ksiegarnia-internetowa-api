@@ -18,32 +18,32 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Valid;
 
 #[ORM\Entity(repositoryClass: BookRepository::class)]
-#[ApiResource(
-    collectionOperations: ["get", "post"],
-    itemOperations: [
-        "get" => [
-            "path" => "/getEbook/{id}",
-            "normalization_context" => [
-                "groups"=> [
-                    "ebook:read",
-                    "ebook:item:get"
-                ]
-            ]
-        ],
-        "put"
-    ],
-    shortName: 'ebookesr',
-    attributes: [
-        "pagination_items_per_page" => 3,
-        "formats" => [
-            "jsonld",
-            "json",
-            "csv" => ["text/csv"]]
-        ],
-    denormalizationContext: ["groups"=>["ebook:write"]],
-    normalizationContext: ["groups"=>["ebook:read"]]
-
-)]
+//#[ApiResource(
+//    collectionOperations: ["get", "post"],
+//    itemOperations: [
+//        "get" => [
+//            "path" => "/getEbook/{id}",
+//            "normalization_context" => [
+//                "groups"=> [
+//                    "ebook:read",
+//                    "ebook:item:get"
+//                ]
+//            ]
+//        ],
+//        "put"
+//    ],
+//    shortName: 'ebookesr',
+//    attributes: [
+//        "pagination_items_per_page" => 3,
+//        "formats" => [
+//            "jsonld",
+//            "json",
+//            "csv" => ["text/csv"]]
+//        ],
+//    denormalizationContext: ["groups"=>["ebook:write"]],
+//    normalizationContext: ["groups"=>["ebook:read"]]
+//
+//)]
 #[ApiFilter(BooleanFilter::class, properties: ["isPublished"])]
 #[ApiFilter(
     SearchFilter::class,

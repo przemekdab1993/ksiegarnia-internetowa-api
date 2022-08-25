@@ -1,0 +1,55 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello Api-Platform 2{% endblock %}
+
+{% block body %}
+
+<div class="example-wrapper">
+    <div class="box-content">
+        <h1>Panel logowania</h1>
+    </div>
+
+    <div class="box-content-2">
+        <div class="container">
+            <div class="row">
+                <div class="login-form mt-4 p-4">
+
+                    <form method="post" action="#" class="row">
+
+                        <div id="error-message" class="alert d-none alert-danger"></div>
+
+                        <div class="col-12 mb-2">
+                            <label for="inputEmail">Email</label>
+                            <input type="email" name="email" id="inputEmail" value="" class="form-control" required autofocus>
+                        </div>
+                        <div class="col-12 mb-2">
+                            <label for="inputPassword">Password</label>
+                            <input type="password" name="password" id="inputPassword" class="form-control" required>
+                        </div>
+                        {#                       zmiana na domyślną wartość ustawiania zapamiętaj mnie#}
+                        {#                       <div class="form-check mb-2">#}
+                        {#                           <label>#}
+                        {#                               <input type="checkbox" name="_remember_me" class="form-check-input">#}
+                        {#                               Remember me#}
+                        {#                           </label>#}
+                        {#                       </div>#}
+
+{#                        <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">#}
+                        <div class="col-12 mb-2">
+                            <button class="btn btn-lg btn-primary float-end" type="submit">Login</button>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+{% endblock %}
+
+{% block javascripts_end %}
+    <script src={{ asset('asset/js/loginAjax.js') }}></script>
+{% endblock %}
+
