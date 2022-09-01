@@ -13,7 +13,8 @@ class FrontEndController extends AbstractController
     {
         return $this->render('front_end/index.html.twig', [
             'controller_name' => 'FrontEndController',
-            'error' => null
+            'error' => null,
+            'user' => $this->getUser()
         ]);
     }
 }

@@ -1,10 +1,10 @@
 $(function() {
     const $containerVote = $('.login-form');
     const $errorBlock = $('#error-message');
+    const $userInfo = $('#user-status-login-true');
 
     $containerVote.find('form').on('submit', function(event) {
         event.preventDefault();
-        const form = $(this);
 
 
         let dataSet = {
@@ -23,25 +23,32 @@ $(function() {
                 password: dataSet.password,
             }),
 
-            success: function (data) {
+            success: function (data, textStatus, request) {
                 console.log('Submission was successful.');
 
-                console.log(data);
-
+                console.log(request.getResponseHeader('location'));
+                $.ajax({
+                    url: request.getResponseHeader('location'),
+                    method: 'GET',
+                    success: function (data, textStatus, request) {
+                        $userInfo.find('span.user-name').text(data.userName);
+                        $userInfo.removeClass('d-none');
+                        $userInfo.next().addClass('d-none');
+                    }
+                });
             },
             error: function(jqXHR, textStatus, errorMessage) {
                 console.log('An error occurred.');
-                //console.log(errorMessage); // Optional
-                console.log(jqXHR.responseJSON); // Optional
-                if(jqXHR.responseJSON) {
-
+                if (jqXHR.responseJSON) {
                     $errorBlock.text(jqXHR.responseJSON.error);
+                    $errorBlock.removeClass('d-none');
+                } else {
+                    $errorBlock.text('Unknown error');
                     $errorBlock.removeClass('d-none');
                 }
             },
         }).then(function(data) {
-
-            //console.log(data);
+            //console.log(data.);
         });
     });
 });
