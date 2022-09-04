@@ -47,7 +47,7 @@ class UserApi implements UserInterface, PasswordAuthenticatedUserInterface
     private $password;
 
     #[ORM\Column(type: 'string', length: 255, unique: true)]
-    #[Groups(['user_api:read', 'user_api:write', 'cheese_list:item:get', 'cheeses_list:write'])]
+    #[Groups(['user_api:read', 'user_api:write', 'cheese_list:item:get'])]
     #[NotBlank]
     private $userName;
 
