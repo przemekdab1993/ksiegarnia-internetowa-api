@@ -3,6 +3,10 @@
 {% block title %}Hello Api-Platform 2{% endblock %}
 
 {% block body %}
+    <script>
+        window.user = {{ user|raw }}
+    </script>
+
     <div class="container-main">
         <div class="row">
             <div class="col-12 example-wrapper example-wrapper-top">
@@ -17,7 +21,7 @@
                     You are currently
                         <span id="user-status-login-true" class="d-none">
                             authenticated as <span class="user-name">'unknown'</span>
-{#                            <a href="{{ path('logout') }}" class="btn btn-warning btn-sm">Log out</a>#}
+                            <a href="{{ path('app_logout') }}" class="btn btn-warning btn-sm">Log out</a>
                         </span>
                         <span id="user-status-login-false">not authenticated</span>
                 </p>

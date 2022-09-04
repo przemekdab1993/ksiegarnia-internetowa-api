@@ -23,4 +23,10 @@ class SecurityController extends AbstractController
             'Location' => $iriConverter->getIriFromItem($this->getUser())
         ]);
     }
+
+    #[Route('/logout', name: 'app_logout')]
+    public function logout(): Response
+    {
+        throw new \Exception('should not be recheed');
+    }
 }
