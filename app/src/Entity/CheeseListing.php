@@ -34,7 +34,8 @@ use Symfony\Component\Validator\Constraints\Valid;
             ]
         ],
         'put' => [
-            'access_control' => 'is_granted("ROLE_USER")'
+            'access_control' => 'is_granted("ROLE_USER") and object.getOwner() == user',
+            'security_message' => 'only the creator can edit a cheese listing'
         ],
         'delete' => [
             'access_control' => 'is_granted("ROLE_ADMIN")'
