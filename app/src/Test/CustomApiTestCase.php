@@ -18,7 +18,24 @@ class  CustomApiTestCase extends ApiTestCase
         $user->setEmail($email);
         $user->setUserName(substr($email, 0, strpos($email, '@')));
 
-        $encoded = self::$container->get('security.password_encoder')->encodePassword($user,  $password);
+        $encoded = static::getContainer()->get('security.user_password_hasher')->hashPassword($user,  $password);
+        $user->setPassword($encoded);
+
+        $em = $this->getEntityManager();
+        $em->persist($user);
+        $em->flush();
+
+        return $user;
+    }
+
+    protected function createUserAdmin(string $email, string $password):UserApi
+    {
+        $user = new UserApi();
+        $user->setEmail($email);
+        $user->setUserName(substr($email, 0, strpos($email, '@')));
+        $user->setRoles(["ROLE_ADMIN"]);
+
+        $encoded = static::getContainer()->get('security.user_password_hasher')->hashPassword($user,  $password);
         $user->setPassword($encoded);
 
         $em = $this->getEntityManager();
@@ -52,6 +69,6 @@ class  CustomApiTestCase extends ApiTestCase
 
     protected function getEntityManager():EntityManagerInterface
     {
-        return self::$container->get('doctrine')->getManager();
+        return static::getContainer()->get('doctrine')->getManager();
     }
 }

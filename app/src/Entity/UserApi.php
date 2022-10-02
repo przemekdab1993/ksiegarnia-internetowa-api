@@ -13,14 +13,35 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\SerializedName;
 use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Valid;
 
 #[ORM\Entity(repositoryClass: UserApiRepository::class)]
 #[ApiResource(
+    collectionOperations: [
+        'get' => [
+            'access_control' => 'is_granted("ROLE_USER")'
+        ],
+        'post' => [
+            'access_control' => 'is_granted("IS_AUTHENTICATED_ANONYMOUSLY")'
+        ]
+    ],
+    itemOperations: [
+        'get' => [
+            'access_control' => 'is_granted("ROLE_USER")',
+        ],
+        'put' => [
+            'access_control' => 'is_granted("ROLE_USER") and previous_object == user',
+        ],
+        'delete' => [
+            'access_control' => 'is_granted("ROLE_ADMIN")',
+        ]
+    ],
     denormalizationContext: ['groups' => ['user_api:write']],
     normalizationContext: ['groups' => ['user_api:read']]
+
 )]
 #[ApiFilter(PropertyFilter::class)]
 #[UniqueEntity(fields: ['userName'])]
@@ -42,9 +63,11 @@ class UserApi implements UserInterface, PasswordAuthenticatedUserInterface
     private $roles = [];
 
     #[ORM\Column(type: 'string')]
+    private $password;
+
     #[Groups(['user_api:write'])]
     #[NotBlank]
-    private $password;
+    private $plainPassword;
 
     #[ORM\Column(type: 'string', length: 255, unique: true)]
     #[Groups(['user_api:read', 'user_api:write', 'cheese_list:item:get'])]
@@ -147,7 +170,7 @@ class UserApi implements UserInterface, PasswordAuthenticatedUserInterface
     public function eraseCredentials()
     {
         // If you store any temporary, sensitive data on the user, clear it here
-        // $this->plainPassword = null;
+        $this->plainPassword = null;
     }
 
     public function setUserName(string $userName): self
@@ -183,6 +206,19 @@ class UserApi implements UserInterface, PasswordAuthenticatedUserInterface
                 $cheeseListing->setOwner(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getPlainPassword(): ?string
+    {
+        return $this->plainPassword;
+    }
+
+    #[SerializedName('password')]
+    public function setPlainPassword(string $plainPassword): self
+    {
+        $this->plainPassword = $plainPassword;
 
         return $this;
     }
