@@ -25,7 +25,8 @@ use Symfony\Component\Validator\Constraints\Valid;
             'access_control' => 'is_granted("ROLE_USER")'
         ],
         'post' => [
-            'access_control' => 'is_granted("IS_AUTHENTICATED_ANONYMOUSLY")'
+            'access_control' => 'is_granted("IS_AUTHENTICATED_ANONYMOUSLY")',
+            'validation_groups' => ['Default', 'create']
         ]
     ],
     itemOperations: [
@@ -33,7 +34,7 @@ use Symfony\Component\Validator\Constraints\Valid;
             'access_control' => 'is_granted("ROLE_USER")',
         ],
         'put' => [
-            'access_control' => 'is_granted("ROLE_USER") and previous_object == user',
+            'access_control' => 'is_granted("ROLE_USER") and object == user',
         ],
         'delete' => [
             'access_control' => 'is_granted("ROLE_ADMIN")',
@@ -60,13 +61,14 @@ class UserApi implements UserInterface, PasswordAuthenticatedUserInterface
     private $email;
 
     #[ORM\Column(type: 'json')]
+//    #[Groups(['user_api:write'])]
     private $roles = [];
 
     #[ORM\Column(type: 'string')]
     private $password;
 
     #[Groups(['user_api:write'])]
-    #[NotBlank]
+    #[NotBlank(groups: ['create'])]
     private $plainPassword;
 
     #[ORM\Column(type: 'string', length: 255, unique: true)]
