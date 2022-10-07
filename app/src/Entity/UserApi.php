@@ -61,7 +61,7 @@ class UserApi implements UserInterface, PasswordAuthenticatedUserInterface
     private $email;
 
     #[ORM\Column(type: 'json')]
-//    #[Groups(['user_api:write'])]
+    #[Groups(['admin_api:write'])]
     private $roles = [];
 
     #[ORM\Column(type: 'string')]
@@ -80,6 +80,10 @@ class UserApi implements UserInterface, PasswordAuthenticatedUserInterface
     #[Groups(['user_api:read', 'user_api:write'])]
     #[Valid]
     private $cheeseListings;
+
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Groups(['admin_api:read', 'user_api:write'])]
+    private $phoneNumber;
 
     public function __construct()
     {
@@ -221,6 +225,18 @@ class UserApi implements UserInterface, PasswordAuthenticatedUserInterface
     public function setPlainPassword(string $plainPassword): self
     {
         $this->plainPassword = $plainPassword;
+
+        return $this;
+    }
+
+    public function getPhoneNumber(): ?string
+    {
+        return $this->phoneNumber;
+    }
+
+    public function setPhoneNumber(?string $phoneNumber): self
+    {
+        $this->phoneNumber = $phoneNumber;
 
         return $this;
     }
