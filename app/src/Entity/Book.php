@@ -32,7 +32,6 @@ use Symfony\Component\Validator\Constraints\Valid;
 //        ],
 //        "put"
 //    ],
-//    shortName: 'ebookesr',
 //    attributes: [
 //        "pagination_items_per_page" => 3,
 //        "formats" => [

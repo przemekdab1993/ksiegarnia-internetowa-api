@@ -30,7 +30,7 @@ use Symfony\Component\Validator\Constraints\Valid;
     itemOperations: [
         'get' => [
             'normalization_context' => [
-                'groups'=> ['cheeses_list:read', 'cheese_list:item:get']
+                'groups'=> ['cheese:read', 'cheese:item:get']
             ]
         ],
         'put' => [
@@ -47,8 +47,8 @@ use Symfony\Component\Validator\Constraints\Valid;
             'jsonld', 'json', 'html', 'jsonhal', 'csv' => ['text/csv']
         ]
     ],
-    denormalizationContext: ['groups' => ['cheeses_list:write'], 'swagger_definition_name'=>'Write'],
-    normalizationContext: ['groups' => ['cheeses_list:read'], 'swagger_definition_name'=>'Read']
+    denormalizationContext: ['groups' => ['cheese:write'], 'swagger_definition_name'=>'Write'],
+    normalizationContext: ['groups' => ['cheese:read'], 'swagger_definition_name'=>'Read']
 )]
 #[ApiFilter(BooleanFilter::class, properties: ['isPublished'])]
 #[ApiFilter(
@@ -66,11 +66,11 @@ class CheeseListing
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    #[Groups('cheeses_list:read')]
+    #[Groups('cheese:read')]
     private $id;
 
     #[ORM\Column(type: 'string', length: 255)]
-    #[Groups(['cheeses_list:read', 'cheeses_list:write', 'user_api:read', 'user_api:write'])]
+    #[Groups(['cheese:read', 'cheese:write', 'user_api:read', 'user_api:write'])]
     #[NotBlank]
     #[Length(
         min: 2,
@@ -80,12 +80,12 @@ class CheeseListing
     private $title;
 
     #[ORM\Column(type: 'text')]
-    #[Groups(['cheeses_list:read', 'user_api:read'])]
+    #[Groups(['cheese:read', 'user_api:read'])]
     #[NotBlank]
     private $description;
 
     #[ORM\Column(type: 'integer')]
-    #[Groups(['cheeses_list:read', 'cheeses_list:write', 'user_api:read', 'user_api:write'])]
+    #[Groups(['cheese:read', 'cheese:write', 'user_api:read', 'user_api:write'])]
     #[NotBlank]
     private $price;
 
@@ -96,13 +96,13 @@ class CheeseListing
     private $isPublished = false;
 
     #[ORM\Column(type: 'integer')]
-    #[Groups(['cheeses_list:read', 'cheeses_list:write', 'user_api:read', 'user_api:write'])]
+    #[Groups(['cheese:read', 'cheese:write', 'user_api:read', 'user_api:write'])]
     #[NotBlank]
     private $quantity;
 
     #[ORM\ManyToOne(targetEntity: UserApi::class, inversedBy: 'cheeseListings')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(['cheeses_list:read', 'cheeses_list:write'])]
+    #[Groups(['cheese:read', 'cheese:write'])]
     #[Valid]
     private $owner;
 
@@ -135,7 +135,7 @@ class CheeseListing
         return $this->description;
     }
 
-    #[Groups('cheeses_list:read')]
+    #[Groups('cheese:read')]
     public function getShortDescription(): ?string
     {
         if (strlen($this->description) < 40) {
@@ -152,7 +152,7 @@ class CheeseListing
         return $this;
     }
 
-    #[Groups(['cheeses_list:write', 'user_api:write'])]
+    #[Groups(['cheese:write', 'user_api:write'])]
     #[SerializedName('description')]
     public function setTextDescription(string $description): self
     {
@@ -179,7 +179,7 @@ class CheeseListing
     }
 
 
-    #[Groups('cheeses_list:read')]
+    #[Groups('cheese:read')]
     public function getCreatedAgo(): string
     {
         return Carbon::instance($this->getCreatedAt())->diffForHumans();
