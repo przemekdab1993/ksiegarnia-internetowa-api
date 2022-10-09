@@ -40,6 +40,7 @@ use Symfony\Component\Validator\Constraints\Valid;
             'access_control' => 'is_granted("ROLE_ADMIN")',
         ]
     ],
+    shortName: 'user_api',
     denormalizationContext: ['groups' => ['user_api:write']],
     normalizationContext: ['groups' => ['user_api:read']]
 
