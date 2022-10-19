@@ -59,8 +59,13 @@ class UserApiNormalizer implements ContextAwareNormalizerInterface , CacheableSu
 
     private function userIsOwner(UserApi $user):bool
     {
-        if ($this->security->getUser()->getUserIdentifier() === $user->getUserIdentifier()) {
-            return true;
+        /**
+         * @var UserApi|null $userAuthenticatedUser
+         */
+        $userAuthenticatedUser = $this->security->getUser();
+
+        if ($userAuthenticatedUser === $user->getUserIdentifier()) {
+            return $userAuthenticatedUser->getUserIdentifier() === $user->getUserIdentifier();
         }
 
         return false;

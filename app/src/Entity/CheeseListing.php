@@ -47,8 +47,8 @@ use Symfony\Component\Validator\Constraints\Valid;
             'jsonld', 'json', 'html', 'jsonhal', 'csv' => ['text/csv']
         ]
     ],
-    denormalizationContext: ['groups' => ['cheese:write'], 'swagger_definition_name'=>'Write'],
-    normalizationContext: ['groups' => ['cheese:read'], 'swagger_definition_name'=>'Read']
+    denormalizationContext: ['groups' => ['cheese:write']],
+    normalizationContext: ['groups' => ['cheese:read']]
 )]
 #[ApiFilter(BooleanFilter::class, properties: ['isPublished'])]
 #[ApiFilter(

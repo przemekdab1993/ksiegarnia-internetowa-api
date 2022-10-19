@@ -25,6 +25,7 @@ class UserResourceTest extends CustomApiTestCase
         $this->assertResponseStatusCodeSame(201);
 
         $this->logIn($client, 'user@example.com', 'string');
+
     }
 
     public function testUpdateUser()
@@ -59,7 +60,9 @@ class UserResourceTest extends CustomApiTestCase
     public function testGetUser()
     {
         $client = self::createClient();
-        $user = $this->createUserAndLogIn($client, 'ada@gmail.com', 'jajko');
+        $user = $this->createUser( 'ada@gmail.com', 'jajko');
+
+        $this->createUserAndLogIn($client, 'ada2@gmail.com', 'jajko2');
 
         $user->setPhoneNumber('555-321-432');
         $em = $this->getEntityManager();
