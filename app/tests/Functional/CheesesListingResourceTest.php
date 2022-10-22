@@ -22,13 +22,36 @@ class CheesesListingResourceTest extends CustomApiTestCase
         ]);
         $this->assertResponseStatusCodeSame(401);
 
-        $this->createUserAndLogIn($client, 'ewelinakula@gmail.com', 'kula');
+        $authenticatedUser = $this->createUserAndLogIn($client, 'ewelinakula@gmail.com', 'kula');
+        $otherUser = $this->createUser('juje@gmail.com','sra');
+
+        $cheesyData = [
+            "title" => "stringoser",
+            "price" => 2220,
+            "quantity" => 10,
+            "description" => "string"
+        ];
 
         $client->request('POST', 'api/cheeses', [
             'headers' => [ 'Content-Type' => 'application/json'],
-            'json' => []
+            'json' => $cheesyData
         ]);
         $this->assertResponseStatusCodeSame(422);
+
+
+
+        $client->request('POST', 'api/cheeses', [
+            'headers' => [ 'Content-Type' => 'application/json'],
+            'json' => $cheesyData + [ 'owner' => '/api/user_apis/'.$otherUser->getId()]
+        ]);
+        $this->assertResponseStatusCodeSame(422, 'not passing the correct owner');
+
+
+        $client->request('POST', 'api/cheeses', [
+            'headers' => [ 'Content-Type' => 'application/json'],
+            'json' => $cheesyData + [ 'owner' => '/api/user_apis/'.$authenticatedUser->getId()]
+        ]);
+        $this->assertResponseStatusCodeSame(201);
 
     }
 
