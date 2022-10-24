@@ -36,7 +36,7 @@ class CheesesListingResourceTest extends CustomApiTestCase
             'headers' => [ 'Content-Type' => 'application/json'],
             'json' => $cheesyData
         ]);
-        $this->assertResponseStatusCodeSame(422);
+        $this->assertResponseStatusCodeSame(201);
 
 
 

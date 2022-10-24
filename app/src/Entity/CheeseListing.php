@@ -18,7 +18,6 @@ use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Valid;
 
-#[ORM\Entity(repositoryClass: CheeseListingRepository::class)]
 #[ApiResource(
     collectionOperations: [
         'get' => [
@@ -62,6 +61,8 @@ use Symfony\Component\Validator\Constraints\Valid;
 )]
 #[ApiFilter(RangeFilter::class, properties: ['price'])]
 #[ApiFilter(PropertyFilter::class)]
+#[ORM\Entity(repositoryClass: CheeseListingRepository::class)]
+#[ORM\EntityListeners(['App\Doctrine\CheeseListingSetOwnerListener'])]
 class CheeseListing
 {
     #[ORM\Id]
@@ -105,7 +106,6 @@ class CheeseListing
     #[ORM\JoinColumn(nullable: false)]
     #[Groups(['cheese:read', 'cheese:collection:post'])]
     #[IsValidOwner]
-    #[NotBlank]
     private $owner;
 
 

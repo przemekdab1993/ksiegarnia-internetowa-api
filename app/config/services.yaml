@@ -33,3 +33,6 @@ services:
         arguments: [ '@App\ApiPlatform\AutoGroupResourceMetadataFactory.inner' ]
         decoration_priority: -20
 
+    App\Doctrine\CheeseListingSetOwnerListener:
+        tags: ['doctrine.orm.entity_listener']
+
