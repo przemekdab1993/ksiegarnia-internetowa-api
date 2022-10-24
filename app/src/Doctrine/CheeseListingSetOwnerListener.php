@@ -16,8 +16,7 @@ class CheeseListingSetOwnerListener
     {
         $this->security = $security;
     }
-
-
+    
     public function prePersist(CheeseListing $cheeseListing)
     {
         if ($cheeseListing->getOwner()) {
