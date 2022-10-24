@@ -1,0 +1,16 @@
+.container-main {
+}
+
+.example-wrapper {
+    padding: 25px;
+}
+.example-wrapper.example-wrapper-top {
+    background: #fffb70;
+    padding: 50px 25px;
+}
+.example-wrapper.example-wrapper-left {
+    background: #2ee4a7;
+}
+.example-wrapper.example-wrapper-right {
+    background: #95eace;
+}

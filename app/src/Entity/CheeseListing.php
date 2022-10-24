@@ -8,6 +8,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\RangeFilter;
 use ApiPlatform\Core\Serializer\Filter\PropertyFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
+use App\Validator\IsValidOwner;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\SerializedName;
 use App\Repository\CheeseListingRepository;
@@ -17,16 +18,27 @@ use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Valid;
 
-#[ORM\Entity(repositoryClass: CheeseListingRepository::class)]
 #[ApiResource(
-    collectionOperations: ['get', 'post'],
+    collectionOperations: [
+        'get' => [
+
+        ],
+        'post' => [
+            'access_control' => 'is_granted("ROLE_USER")'
+        ]
+    ],
     itemOperations: [
         'get' => [
             'normalization_context' => [
-                'groups'=> ['cheeses_list:read', 'cheese_list:item:get']
+                'groups'=> ['cheese:read', 'cheese:item:get']
             ]
         ],
-        'put'
+        'put' => [
+            'access_control' => 'is_granted("EDIT", previous_object) ',
+        ],
+        'delete' => [
+            'access_control' => 'is_granted("ROLE_ADMIN")'
+        ]
     ],
     shortName: 'cheese',
     attributes: [
@@ -35,8 +47,8 @@ use Symfony\Component\Validator\Constraints\Valid;
             'jsonld', 'json', 'html', 'jsonhal', 'csv' => ['text/csv']
         ]
     ],
-    denormalizationContext: ['groups' => ['cheeses_list:write'], 'swagger_definition_name'=>'Write'],
-    normalizationContext: ['groups' => ['cheeses_list:read'], 'swagger_definition_name'=>'Read']
+    denormalizationContext: ['groups' => ['cheese:write']],
+    normalizationContext: ['groups' => ['cheese:read']]
 )]
 #[ApiFilter(BooleanFilter::class, properties: ['isPublished'])]
 #[ApiFilter(
@@ -49,16 +61,18 @@ use Symfony\Component\Validator\Constraints\Valid;
 )]
 #[ApiFilter(RangeFilter::class, properties: ['price'])]
 #[ApiFilter(PropertyFilter::class)]
+#[ORM\Entity(repositoryClass: CheeseListingRepository::class)]
+#[ORM\EntityListeners(['App\Doctrine\CheeseListingSetOwnerListener'])]
 class CheeseListing
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    #[Groups('cheeses_list:read')]
+    #[Groups('cheese:read')]
     private $id;
 
     #[ORM\Column(type: 'string', length: 255)]
-    #[Groups(['cheeses_list:read', 'cheeses_list:write', 'user_api:read', 'user_api:write'])]
+    #[Groups(['cheese:read', 'cheese:write', 'user_api:read', 'user_api:write'])]
     #[NotBlank]
     #[Length(
         min: 2,
@@ -68,12 +82,12 @@ class CheeseListing
     private $title;
 
     #[ORM\Column(type: 'text')]
-    #[Groups(['cheeses_list:read', 'user_api:read'])]
+    #[Groups(['cheese:read', 'user_api:read'])]
     #[NotBlank]
     private $description;
 
     #[ORM\Column(type: 'integer')]
-    #[Groups(['cheeses_list:read', 'cheeses_list:write', 'user_api:read', 'user_api:write'])]
+    #[Groups(['cheese:read', 'cheese:write', 'user_api:read', 'user_api:write'])]
     #[NotBlank]
     private $price;
 
@@ -84,14 +98,14 @@ class CheeseListing
     private $isPublished = false;
 
     #[ORM\Column(type: 'integer')]
-    #[Groups(['cheeses_list:read', 'cheeses_list:write', 'user_api:read', 'user_api:write'])]
+    #[Groups(['cheese:read', 'cheese:write', 'user_api:read', 'user_api:write'])]
     #[NotBlank]
     private $quantity;
 
     #[ORM\ManyToOne(targetEntity: UserApi::class, inversedBy: 'cheeseListings')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(['cheeses_list:read', 'cheeses_list:write'])]
-    #[Valid]
+    #[Groups(['cheese:read', 'cheese:collection:post'])]
+    #[IsValidOwner]
     private $owner;
 
 
@@ -123,7 +137,7 @@ class CheeseListing
         return $this->description;
     }
 
-    #[Groups('cheeses_list:read')]
+    #[Groups('cheese:read')]
     public function getShortDescription(): ?string
     {
         if (strlen($this->description) < 40) {
@@ -140,7 +154,7 @@ class CheeseListing
         return $this;
     }
 
-    #[Groups(['cheeses_list:write', 'user_api:write'])]
+    #[Groups(['cheese:write', 'user_api:write'])]
     #[SerializedName('description')]
     public function setTextDescription(string $description): self
     {
@@ -167,7 +181,7 @@ class CheeseListing
     }
 
 
-    #[Groups('cheeses_list:read')]
+    #[Groups('cheese:read')]
     public function getCreatedAgo(): string
     {
         return Carbon::instance($this->getCreatedAt())->diffForHumans();

@@ -13,14 +13,37 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\SerializedName;
 use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Valid;
 
 #[ORM\Entity(repositoryClass: UserApiRepository::class)]
 #[ApiResource(
+    collectionOperations: [
+        'get' => [
+            'access_control' => 'is_granted("ROLE_USER")'
+        ],
+        'post' => [
+            'access_control' => 'is_granted("IS_AUTHENTICATED_ANONYMOUSLY")',
+            'validation_groups' => ['Default', 'create']
+        ]
+    ],
+    itemOperations: [
+        'get' => [
+            'access_control' => 'is_granted("ROLE_USER")',
+        ],
+        'put' => [
+            'access_control' => 'is_granted("ROLE_USER") and object == user',
+        ],
+        'delete' => [
+            'access_control' => 'is_granted("ROLE_ADMIN")',
+        ]
+    ],
+    shortName: 'user_api',
     denormalizationContext: ['groups' => ['user_api:write']],
     normalizationContext: ['groups' => ['user_api:read']]
+
 )]
 #[ApiFilter(PropertyFilter::class)]
 #[UniqueEntity(fields: ['userName'])]
@@ -33,21 +56,24 @@ class UserApi implements UserInterface, PasswordAuthenticatedUserInterface
     private $id;
 
     #[ORM\Column(type: 'string', length: 180, unique: true)]
-    #[Groups(['user_api:read', 'user_api:write', 'cheese_list:item:get'])]
+    #[Groups(['user_api:read', 'user_api:write', 'cheese:item:get'])]
     #[NotBlank]
     #[Email]
     private $email;
 
     #[ORM\Column(type: 'json')]
+    #[Groups(['admin_api:write'])]
     private $roles = [];
 
     #[ORM\Column(type: 'string')]
-    #[Groups(['user_api:write'])]
-    #[NotBlank]
     private $password;
 
+    #[Groups(['user_api:write'])]
+    #[NotBlank(groups: ['create'])]
+    private $plainPassword;
+
     #[ORM\Column(type: 'string', length: 255, unique: true)]
-    #[Groups(['user_api:read', 'user_api:write', 'cheese_list:item:get', 'cheeses_list:write'])]
+    #[Groups(['user_api:read', 'user_api:write', 'cheese:item:get'])]
     #[NotBlank]
     private $userName;
 
@@ -55,6 +81,10 @@ class UserApi implements UserInterface, PasswordAuthenticatedUserInterface
     #[Groups(['user_api:read', 'user_api:write'])]
     #[Valid]
     private $cheeseListings;
+
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Groups(['admin_api:read', 'owner:read', 'user_api:write'])]
+    private $phoneNumber;
 
     public function __construct()
     {
@@ -147,7 +177,7 @@ class UserApi implements UserInterface, PasswordAuthenticatedUserInterface
     public function eraseCredentials()
     {
         // If you store any temporary, sensitive data on the user, clear it here
-        // $this->plainPassword = null;
+        $this->plainPassword = null;
     }
 
     public function setUserName(string $userName): self
@@ -183,6 +213,31 @@ class UserApi implements UserInterface, PasswordAuthenticatedUserInterface
                 $cheeseListing->setOwner(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getPlainPassword(): ?string
+    {
+        return $this->plainPassword;
+    }
+
+    #[SerializedName('password')]
+    public function setPlainPassword(string $plainPassword): self
+    {
+        $this->plainPassword = $plainPassword;
+
+        return $this;
+    }
+
+    public function getPhoneNumber(): ?string
+    {
+        return $this->phoneNumber;
+    }
+
+    public function setPhoneNumber(?string $phoneNumber): self
+    {
+        $this->phoneNumber = $phoneNumber;
 
         return $this;
     }
