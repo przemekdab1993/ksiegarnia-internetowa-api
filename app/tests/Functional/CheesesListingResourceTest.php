@@ -89,4 +89,64 @@ class CheesesListingResourceTest extends CustomApiTestCase
         $this->assertResponseStatusCodeSame(200);
 
     }
+
+    public function testGetCheeseListingCollection()
+    {
+        $client = self::createClient();
+        $user = $this->createUser('duda@gmail.com', 'dupa');
+
+        $cheeseListing1 = new CheeseListing('cheese1');
+        $cheeseListing1->setOwner($user);
+        $cheeseListing1->setPrice(3313);
+        $cheeseListing1->setQuantity(3);
+        $cheeseListing1->setDescription('opis sera 1.');
+
+        $cheeseListing2 = new CheeseListing('cheese2');
+        $cheeseListing2->setOwner($user);
+        $cheeseListing2->setPrice(3013);
+        $cheeseListing2->setQuantity(5);
+        $cheeseListing2->setDescription('opis sera 2.');
+        $cheeseListing2->setIsPublished(true);
+
+        $cheeseListing3 = new CheeseListing('cheese3');
+        $cheeseListing3->setOwner($user);
+        $cheeseListing3->setPrice(1213);
+        $cheeseListing3->setQuantity(30);
+        $cheeseListing3->setDescription('opis sera 3.');
+        $cheeseListing3->setIsPublished(true);
+
+        $em = $this->getEntityManager();
+        $em->persist($cheeseListing1);
+        $em->persist($cheeseListing2);
+        $em->persist($cheeseListing3);
+
+        $em->flush();
+
+
+        $client->request('GET', '/api/cheeses');
+        $this->assertJsonContains(['hydra:totalItems' => 2]);
+    }
+
+    public function testGetCheeseListingItem()
+    {
+        $client = self::createClient();
+        $user = $this->createUser('duda@gmail.com', 'dupa');
+
+        $cheeseListing1 = new CheeseListing('cheese1');
+        $cheeseListing1->setOwner($user);
+        $cheeseListing1->setPrice(3313);
+        $cheeseListing1->setQuantity(3);
+        $cheeseListing1->setDescription('opis sera 1.');
+        $cheeseListing1->setIsPublished(false);
+
+
+        $em = $this->getEntityManager();
+        $em->persist($cheeseListing1);
+
+        $em->flush();
+
+
+        $client->request('GET', '/api/cheeses/'.$cheeseListing1->getId());
+        $this->assertResponseStatusCodeSame(404);
+    }
 }
