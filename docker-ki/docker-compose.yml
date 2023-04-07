@@ -1,7 +1,7 @@
 version: '3.8'
 services:
   db:
-    container_name: db-api
+    container_name: db_ki
     image: postgres:13
     restart: on-failure
     environment:
